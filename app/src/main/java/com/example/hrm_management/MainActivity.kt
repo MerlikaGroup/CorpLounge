@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         // Restart the activity to apply the locale change
         recreate()
+        //Start project
     }
 
 }
