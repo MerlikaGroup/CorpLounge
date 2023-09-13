@@ -4,33 +4,33 @@ interface SharedPreferencesManager {
     fun getMenuList(): String
     fun setMenuList(menuList: String)
 
-    fun getCreatePDF(): String
-    fun setCreatePDF(createPDF: String)
+    fun getCreatePDF(): Boolean
+    fun setCreatePDF(createPDF: Boolean)
 
-    fun getRequestSalaryChange(): String
-    fun setRequestSalaryChange(requestSalaryChange: String)
+    fun getRequestSalaryChange(): Boolean
+    fun setRequestSalaryChange(requestSalaryChange: Boolean)
 
     fun getLanguage(): String
     fun setLanguage(language: String)
 
-    fun getVoucherAccess(): String
-    fun setVoucherAccess(voucherAccess: String)
+    fun getVoucherAccess(): Boolean
+    fun setVoucherAccess(voucherAccess: Boolean)
 
-    fun getMonetization(): String
-    fun setMonetization(monetization: String)
+    fun getMonetization(): Boolean
+    fun setMonetization(monetization: Boolean)
 
-    fun getThemeColor(): String
-    fun setThemeColor(themeColor: String)
+    fun getThemeColor(): Int
+    fun setThemeColor(themeColor: Int)
 
     fun getCurrency(): String
     fun setCurrency(currency: String)
 
-    fun getEmailNotifications(): String
-    fun setEmailNotifications(emailNotifications: String)
+    fun getEmailNotifications(): Boolean
+    fun setEmailNotifications(emailNotifications: Boolean)
 
-    fun getBankTransfer(): String
-    fun setBankTransfer(bankTransfer: String)
+    fun getBankTransfer(): Boolean
+    fun setBankTransfer(bankTransfer: Boolean)
 
-    fun getCash(): String
-    fun setCash(cash: String)
+    fun getCash(): Boolean
+    fun setCash(cash: Boolean)
 }
