@@ -30,8 +30,8 @@ class LoginFragment : Fragment() {
         manager.setMenuList("CHANGEDDDDDDDDD")
 
         // Replace the current fragment with another fragment
-        val fragmentToReplace = RegisterFragment() // Replace with the desired fragment
-        mainActivity.replaceFragment(fragmentToReplace)
+//        val fragmentToReplace = RegisterFragment() // Replace with the desired fragment
+//        mainActivity.replaceFragment(fragmentToReplace)
 
 
 

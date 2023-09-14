@@ -117,6 +117,13 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.1.2'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+
+    implementation 'com.caverock:androidsvg:1.4'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2" // or a newer version
+
 
 
 
