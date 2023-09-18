@@ -59,11 +59,12 @@ class MainActivity : AppCompatActivity() {
 
 
         // Create an instance of SyncManager
-        val syncManager = SyncManager(database, manager)
+        val syncManager = SyncManager(database, manager, api)
 
         // Call the synchronization method on a background thread
         Thread {
-            syncManager.insertConfigurationValues();
+            syncManager.sync()
+//            syncManager.insertConfigurationValues();
 
             // Update UI or perform other tasks after synchronization
             runOnUiThread {
@@ -71,26 +72,11 @@ class MainActivity : AppCompatActivity() {
             }
         }.start()
 
-        GlobalScope.launch(Dispatchers.Main) {
-            delay(2000);
-            val userCall = api.getConfigs() // Replace with your actual API call function from 'Api'
-            val userResult = ApiUtils.performApiCall(userCall)
+        Log.d("Menu", manager.getUsername().toString())
 
-            when (userResult) {
-                is Result.Success -> { // Access Success directly
-                    val userResponse = userResult.data
-                    // Handle successful response
-                    Log.d("Menu", userResponse.toString())
-                }
-                is Error -> { // Access Error directly
-                    val errorMessage = userResult.message
-                    // Handle error
-                    if (errorMessage != null) {
-                        Log.e("API Error", errorMessage)
-                    }
-                }
-            }
-        }
+
+
+
 
 
 

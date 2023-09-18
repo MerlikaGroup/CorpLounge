@@ -12,4 +12,7 @@ object AppConfigurations {
     const val EMAIL_NOTIFICATIONS = true
     const val BANK_TRANSFER = true
     const val CASH = true
+    const val USERNAME = "k"
+    const val USERID = 0;
+    const val ROLE = 0;
 }

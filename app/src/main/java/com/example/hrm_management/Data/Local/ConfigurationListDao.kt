@@ -23,4 +23,7 @@ interface ConfigurationListDao {
 
     @Query("SELECT * FROM configurationlist WHERE ConfigurationName = :name and ConfigurationID = 1")
     suspend fun getConfigurationItemByName(name: String): ConfigurationList?
+
+    @Query("DELETE FROM ConfigurationList")
+    fun deleteAll()
 }

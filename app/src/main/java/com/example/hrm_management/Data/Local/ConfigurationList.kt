@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
 data class ConfigurationList (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "ConfigurationID")
-    val configurationId: Int = 0,
+    val configurationId: Int = 1,
 
     @ColumnInfo(name = "ConfigurationName")
     val configurationName: String? = null,

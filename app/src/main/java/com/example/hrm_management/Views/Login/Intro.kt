@@ -46,9 +46,6 @@ class Intro : Fragment() {
         binding = FragmentIntroBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-        // Load and set the SVG image
-        val svgDrawable: Drawable? = VectorDrawableCompat.create(resources, R.drawable.intro, null)
-        binding.svgImageView.setImageDrawable(svgDrawable)
 
 
 

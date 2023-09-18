@@ -6,11 +6,10 @@ import retrofit2.Call
 import retrofit2.Response
 
 object ApiUtils {
-    suspend fun <T> performApiCall(apiCall: Call<T>): Result<Any> {
+    fun <T> performApiCall(apiCall: Call<T>): Result<Any> {
         return try {
-            val response: Response<T> = withContext(Dispatchers.IO) {
-                apiCall.execute()
-            }
+            val response: Response<T> = apiCall.execute()
+
             if (response.isSuccessful) {
                 Result.Success(response.body()!!)
             } else {

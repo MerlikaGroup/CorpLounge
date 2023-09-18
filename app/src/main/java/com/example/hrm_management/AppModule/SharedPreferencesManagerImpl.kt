@@ -4,6 +4,45 @@ import android.content.SharedPreferences
 
 class SharedPreferencesManagerImpl(private val sharedPreferences: SharedPreferences) : SharedPreferencesManager {
 
+
+    override fun getRole(): Int {
+        return sharedPreferences.getInt("ROLE", AppConfigurations.ROLE)
+    }
+
+    override fun setRole(role: Int) {
+        sharedPreferences.edit().putInt("ROLE", role).apply()
+    }
+
+    override fun getUserID(): Int {
+        return sharedPreferences.getInt("USERID", AppConfigurations.USERID)
+    }
+
+    override fun setUserID(userid: Int) {
+        sharedPreferences.edit().putInt("USERID", userid).apply()
+    }
+
+
+
+    override fun getUsername(): String {
+        return sharedPreferences.getString("USERNAME", AppConfigurations.USERNAME) ?: AppConfigurations.USERNAME;
+    }
+
+    override fun setUsername(username: String) {
+        sharedPreferences.edit().putString("USERNAME", username).apply()
+
+    }
+
+     override fun hasUsername() {
+         if(!getUsername().isEmpty()){
+             sharedPreferences.edit().putBoolean("HAS_USERNAME", true).apply()
+         }
+         else{
+             sharedPreferences.edit().putBoolean("HAS_USERNAME", false).apply()
+
+         }
+     }
+
+
     override fun getMenuList(): String {
         return sharedPreferences.getString("MENU_LIST", AppConfigurations.MENU_LIST) ?: AppConfigurations.MENU_LIST
     }

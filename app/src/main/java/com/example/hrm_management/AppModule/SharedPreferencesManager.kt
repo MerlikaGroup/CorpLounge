@@ -1,6 +1,19 @@
 package com.example.hrm_management.AppModule
 
 interface SharedPreferencesManager {
+
+    fun hasUsername();
+
+    fun getUserID(): Int
+    fun setUserID(userID: Int)
+
+    fun getRole(): Int
+    fun setRole(role: Int)
+
+
+    fun getUsername(): String
+    fun setUsername(username: String)
+
     fun getMenuList(): String
     fun setMenuList(menuList: String)
 

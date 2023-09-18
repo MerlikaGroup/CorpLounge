@@ -15,3 +15,4 @@ data class ConfigurationResponse(
     val configurationName: String,
     val value: String
 )
+
