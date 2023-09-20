@@ -16,5 +16,5 @@ interface UserDao {
     fun delete(user: User?)
 
     @Query("SELECT * FROM User WHERE UserID = :userId")
-    fun getUserById(userId: Int): LiveData<User?>? // Define other queries as needed
+    fun getUserById(userId: Int): User// Define other queries as needed
 }

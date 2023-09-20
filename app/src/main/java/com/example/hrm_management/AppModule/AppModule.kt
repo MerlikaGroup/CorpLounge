@@ -6,6 +6,7 @@ import com.example.hrm_management.Data.Api.Interceptor
 import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Data.Local.ConfigurationListDao
 import com.example.hrm_management.Data.Local.UserDao
+import com.example.hrm_management.Utils.SyncManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,8 +16,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class) // or ApplicationComponent if needed
 @Module
+@InstallIn(SingletonComponent::class) // or ApplicationComponent if needed
 class AppModule {
 
     @Provides
@@ -65,4 +66,16 @@ class AppModule {
     fun provideApi(retrofit: Retrofit): Api {
         return retrofit.create(Api::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideSyncManager(
+        appDatabase: AppDatabase,
+        manager: SharedPreferencesManager,
+        api: Api
+    ): SyncManager {
+        return SyncManager(appDatabase, manager, api)
+    }
+
+
 }

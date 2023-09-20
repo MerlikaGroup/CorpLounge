@@ -1,23 +1,18 @@
+package com.example.hrm_management.Utils
+
 import android.util.Log
-import com.example.hrm_management.AppModule.AppConfigurations
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.Data.Api.Api
-import com.example.hrm_management.Data.Api.ApiUtils
-import com.example.hrm_management.Data.Api.Result
 import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Data.Api.Model.ConfigurationResponse
 import com.example.hrm_management.Data.Api.Model.UserResponse
 import com.example.hrm_management.Data.Local.ConfigurationList
-import com.example.hrm_management.Data.Local.User
 import com.example.hrm_management.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
-import kotlin.math.log
+
 
 class SyncManager @Inject constructor(
     private val appdatabase: AppDatabase,

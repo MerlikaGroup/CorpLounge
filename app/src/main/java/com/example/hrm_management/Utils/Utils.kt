@@ -1,16 +1,11 @@
-import android.Manifest
+package com.example.hrm_management.Utils
+
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.LocaleList
 import android.provider.Settings
-import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import com.example.hrm_management.Views.Register.RegisterFragment
-import java.util.*
 
 class Utils {
 
