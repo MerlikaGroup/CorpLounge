@@ -6,6 +6,8 @@ buildscript {
 
         classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:1.3.0"
 
+        classpath "com.android.tools.build:gradle:7.0.0" // Use an appropriate version
+
 
     }
 }

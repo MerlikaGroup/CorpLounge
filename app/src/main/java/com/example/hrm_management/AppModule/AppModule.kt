@@ -1,6 +1,7 @@
 package com.example.hrm_management.AppModule
 
 import android.app.Application
+import com.example.hrm_management.BackgroundSync.SyncWorker
 import com.example.hrm_management.Data.Api.Api
 import com.example.hrm_management.Data.Api.Interceptor
 import com.example.hrm_management.Data.Local.AppDatabase
@@ -77,6 +78,7 @@ class AppModule {
     ): SyncManager {
         return SyncManager(appDatabase, manager, api)
     }
+
 
 
 }

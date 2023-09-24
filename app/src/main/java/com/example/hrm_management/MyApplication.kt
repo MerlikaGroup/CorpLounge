@@ -10,10 +10,17 @@ import android.os.Bundle
 import android.util.Log
 import android.util.StatsLog.logEvent
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.WorkManager
 import com.example.hrm_management.AppModule.AppComponent
 import com.example.hrm_management.AppModule.DaggerAppComponent
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.AppModule.SharedPreferencesModule
+import com.example.hrm_management.BackgroundSync.SyncWorker
+import com.example.hrm_management.Data.Api.Api
+import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Utils.Utils
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
@@ -26,6 +33,9 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import com.google.firebase.iid.FirebaseInstanceIdReceiver
 import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
+import java.util.concurrent.TimeUnit
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkRequest
 
 @HiltAndroidApp
 class MyApplication: Application() {
@@ -37,6 +47,14 @@ class MyApplication: Application() {
     @Inject
     lateinit var manager: SharedPreferencesManager
 
+
+    @Inject
+    lateinit var appDatabase: AppDatabase
+
+    @Inject
+    lateinit var Api: Api;
+
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("StringFormatInvalid")
     override fun onCreate() {
         super.onCreate()
@@ -44,6 +62,25 @@ class MyApplication: Application() {
         Utils.initialize(this)
         FirebaseApp.initializeApp(this)
         retrieveFCMToken();
+
+        // Initialize WorkManager
+        val workManager = WorkManager.getInstance(this)
+
+        // Define the constraints for running the task (if any)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED) // Example: Require network connectivity
+            .build()
+
+        val syncWorkRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java,
+            15, // Repeat interval
+            TimeUnit.MINUTES // Time unit
+        )
+            .setConstraints(constraints)
+            .build()
+
+        // Enqueue the work request
+        workManager.enqueue(syncWorkRequest)
+
 
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)

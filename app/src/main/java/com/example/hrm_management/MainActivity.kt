@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import com.example.hrm_management.AppModule.SharedPreferencesManager
+import com.example.hrm_management.BackgroundSync.SyncWorker
 import com.example.hrm_management.Data.Api.Api
 import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Utils.LocaleHelper
@@ -51,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         val viewpager = binding.viewPager;
         val tabLayout = binding.tabLayout;
         val adapter = OnboardingPagerAdapter(this)
-
 
 
        viewModel.sync();
