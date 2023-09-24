@@ -18,6 +18,7 @@ class Utils {
         fun initialize(context: Context) {
             applicationContext = context.applicationContext
             manager = SharedPreferencesManagerSingleton.getInstance(applicationContext)
+
         }
 
 
@@ -46,9 +47,14 @@ class Utils {
             }
         }
 
-        fun getName(): String{
-           val name = manager.getUsername()
+        fun getName(): Boolean{
+           val name = manager.isLoggedIn()
             return name;
         }
+
+        fun saveToken(token: String){
+            manager.setToken(token);
+        }
+
     }
 }

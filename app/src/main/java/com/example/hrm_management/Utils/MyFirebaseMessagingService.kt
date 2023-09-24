@@ -27,7 +27,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val name = Utils.getName();
 
-        Log.d("EMRII", name)
+        Log.d("EMRII", name.toString())
         // Extract notification data
         val notificationTitle = remoteMessage.notification?.title ?: "Default Title"
         val notificationText = remoteMessage.notification?.body ?: "Default Text"
@@ -68,6 +68,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationId = 1234 // Change this to a unique ID for each notification
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notificationId, builder.build())
+    }
+    override fun onNewToken(token: String) {
+        Log.d("New Token", "Refreshed token: $token")
+
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // FCM registration token to your app server.
+        Utils.saveToken(token)
     }
 }
 

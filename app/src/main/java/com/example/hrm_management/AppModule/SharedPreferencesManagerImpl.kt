@@ -5,6 +5,26 @@ import android.content.SharedPreferences
 class SharedPreferencesManagerImpl(private val sharedPreferences: SharedPreferences) : SharedPreferencesManager {
 
 
+    override fun getToken(): String {
+        return sharedPreferences.getString("TOKEN", AppConfigurations.TOKEN) ?: AppConfigurations.TOKEN;
+    }
+
+
+    override fun setToken(token: String) {
+        sharedPreferences.edit().putString("TOKEN", token).apply()
+    }
+
+
+    override fun isLoggedIn(): Boolean {
+        return sharedPreferences.getBoolean("isLoggedIn", false)
+    }
+
+    override fun setIsLoggedIn(value: Boolean){
+        sharedPreferences.edit().putBoolean("isLoggedIn", value).apply()
+    }
+
+
+
     override fun getRole(): Int {
         return sharedPreferences.getInt("ROLE", AppConfigurations.ROLE)
     }

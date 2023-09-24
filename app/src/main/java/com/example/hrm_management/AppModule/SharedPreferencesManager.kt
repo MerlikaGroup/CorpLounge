@@ -4,6 +4,12 @@ interface SharedPreferencesManager {
 
     fun hasUsername();
 
+    fun setToken(token: String)
+    fun getToken(): String
+
+    fun isLoggedIn(): Boolean;
+    fun setIsLoggedIn(value: Boolean)
+
     fun getUserID(): Int
     fun setUserID(userID: Int)
 

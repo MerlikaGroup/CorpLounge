@@ -12,6 +12,7 @@ import android.util.StatsLog.logEvent
 import android.widget.Toast
 import com.example.hrm_management.AppModule.AppComponent
 import com.example.hrm_management.AppModule.DaggerAppComponent
+import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.AppModule.SharedPreferencesModule
 import com.example.hrm_management.Utils.Utils
 import com.google.android.gms.tasks.OnCompleteListener
@@ -33,6 +34,8 @@ class MyApplication: Application() {
     lateinit var sharedPreferences: SharedPreferences
 
 
+    @Inject
+    lateinit var manager: SharedPreferencesManager
 
     @SuppressLint("StringFormatInvalid")
     override fun onCreate() {
@@ -68,6 +71,7 @@ class MyApplication: Application() {
             Log.d("TOKENNN", "retrieveFCMToken: ${token}")
             val msg = getString(R.string.token, token)
             Log.d("TAG", msg)
+            manager.setToken(token)
             Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
 

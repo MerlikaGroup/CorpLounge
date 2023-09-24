@@ -61,12 +61,16 @@ class SyncManager @Inject constructor(
                         val loginResponse: LoginResponse? = response.body()
                         if (loginResponse != null) {
                             // Handle the successful response here
+                                manager.setIsLoggedIn(true)
                             Log.d("response", loginResponse.toString())
                         } else {
                             Log.d("response", "Response body is null")
+                            manager.setIsLoggedIn(false)
+
                         }
                     } else {
                         Log.d("response", response.message())
+                        manager.setIsLoggedIn(false)
 
                     }
                 }
