@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "606600581245",
+    "project_id": "hrmmanagement-14eca",
+    "storage_bucket": "hrmmanagement-14eca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606600581245:android:02ea2c82537f56e9cb6114",
+        "android_client_info": {
+          "package_name": "com.example.hrm_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu1QZ3OuXn1mL0Ysf-NbYiS8winJiFUdA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

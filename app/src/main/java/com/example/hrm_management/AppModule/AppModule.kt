@@ -53,7 +53,7 @@ class AppModule {
             .build()
 
         // Define your base URL here
-        val BASE_URL = Utils().getBaseURL();
+        val BASE_URL = Utils.getBaseURL();
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL) // You can still set the base URL here

@@ -81,24 +81,17 @@ class LoginFragment : Fragment() {
             // Show the ProgressBar
             progressBar.visibility = View.VISIBLE
 
-            // Launch a coroutine to perform the syncUser operation
-            CoroutineScope(Dispatchers.Main).launch {
-                val result = syncUser(
-                    binding.usernameEditText.text.toString(),
-                    binding.passwordEditText.text.toString()
-                )
-
-                // Hide the ProgressBar
-                progressBar.visibility = View.GONE
-
-                // Handle the result here
-                if (result) {
-                    // Sync was successful
-                } else {
-                    // Handle the case where sync failed
-                }
+            // Perform the network request
+            syncmanager.syncUser(
+                binding.usernameEditText.text.toString(),
+                binding.passwordEditText.text.toString()
+            ) { isDone ->
+                // This is the callback function that will be called when syncUser is done
+                // You can manage ProgressBar visibility here based on `isDone`
+                progressBar.visibility = if (isDone) View.VISIBLE else View.GONE
             }
         }
+
 
 
 
@@ -106,21 +99,7 @@ class LoginFragment : Fragment() {
     }
 
 
-    // Modify the syncUser function to return a suspend function
-    suspend fun syncUser(username: String, password: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                // Replace this with the actual logic to perform user synchronization
-                val result = syncmanager.syncUser(username, password)
 
-                // Return true if the synchronization was successful
-                true
-            } catch (e: Exception) {
-                // Handle any exceptions and return false if there was a failure
-                false
-            }
-        }
-    }
 
 
 }

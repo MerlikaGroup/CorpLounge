@@ -54,7 +54,7 @@ class RegisterFragment : Fragment() {
         binding.myButton.setBackgroundColor(color)
 
         // Get Android ID using Utils
-        val imei = Utils().getAndroidID(requireContext())
+        val imei = Utils.getAndroidID(requireContext())
         Log.d("ManagerUtils", imei.toString());
         Log.d("ManagerDatabase", userdao.getUserById(0).toString())
 

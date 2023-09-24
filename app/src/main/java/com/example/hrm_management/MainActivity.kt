@@ -17,6 +17,7 @@ import com.example.hrm_management.Views.Login.LoginFragment
 import com.example.hrm_management.Views.OnBoarding.OnboardingPagerAdapter
 import com.example.hrm_management.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -44,9 +45,13 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        val device = Build.MODEL;
+        FirebaseAnalytics.getInstance(this).setUserId(device)
+
         val viewpager = binding.viewPager;
         val tabLayout = binding.tabLayout;
         val adapter = OnboardingPagerAdapter(this)
+
 
 
        viewModel.sync();
@@ -70,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }.attach()
 
        val locales = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-           Utils().getCurrentLocale(this)
+           Utils.getCurrentLocale(this)
        } else {
            TODO("VERSION.SDK_INT < N")
        }

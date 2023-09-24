@@ -12,6 +12,7 @@ import com.example.hrm_management.Data.Api.Model.UserResponse
 import com.example.hrm_management.Data.Local.ConfigurationList
 import com.example.hrm_management.Data.Local.User
 import com.example.hrm_management.R
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,27 +27,7 @@ class SyncManager @Inject constructor(
 
     fun sync() {
         try {
-
             syncConfigurations();
-
-//--------------------------------------------------------------------------------------
-//             when (userResult) {
-//                 is Result.Success -> { // Access Success directly
-//                     val userResponse = userResult.data
-//                     // Handle successful response
-//                     Log.d("MenufromAPI", userResponse.toString())
-//
-//                 }
-//                 is Error -> { // Access Error directly
-//                     val errorMessage = userResult.message
-//                     // Handle error
-//                     if (errorMessage != null) {
-//                         Log.e("API Error", errorMessage)
-//                     }
-//                 }
-//                 else -> {}
-//             }
-            //------------------------------------------------------------
         } catch (e: Exception) {
             // Handle errors, e.g., database or SharedPreferences errors
             e.printStackTrace()
@@ -56,33 +37,55 @@ class SyncManager @Inject constructor(
     }
 
 
-    fun syncUser(username: String, password: String) {
-        val loginRequest = LoginRequest(password, username)
-        val userResponseCall: Call<LoginResponse> = api.login(loginRequest)
+    // Inside your SyncManager or Repository class
+    fun syncUser(
+        username: String,
+        password: String,
+        callback: (Boolean) -> Unit
+    ) {
+        try {
+            // Show the ProgressBar
+            callback(true)
 
-        userResponseCall.enqueue(object : Callback<LoginResponse> {
-            override fun onResponse(
-                call: Call<LoginResponse>,
-                response: Response<LoginResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val loginResponse: LoginResponse? = response.body()
-                    if (loginResponse != null) {
-                        // Handle the successful response here
-                        Log.d("response", loginResponse.toString())
+            val loginRequest = LoginRequest(password, username)
+            val userResponseCall: Call<LoginResponse> = api.login(loginRequest)
+
+            userResponseCall.enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(
+                    call: Call<LoginResponse>,
+                    response: Response<LoginResponse>
+                ) {
+                    // Hide the ProgressBar and provide the result via the callback
+                    callback(false)
+                    if (response.isSuccessful) {
+                        val loginResponse: LoginResponse? = response.body()
+                        if (loginResponse != null) {
+                            // Handle the successful response here
+                            Log.d("response", loginResponse.toString())
+                        } else {
+                            Log.d("response", "Response body is null")
+                        }
                     } else {
-                        Log.d("response", loginResponse.toString())
-                    }
-                } else {
-                    // Handle unsuccessful response (e.g., error messages)
-                }
-            }
+                        Log.d("response", response.message())
 
-            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                // Handle network request failure
-            }
-        })
+                    }
+                }
+
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    // Hide the ProgressBar and provide the result via the callback
+                    callback(false)
+
+                    // Handle network request failure
+                }
+            })
+        }catch (e: Exception) {
+            // Handle errors, e.g., database or SharedPreferences errors
+            e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
+
     }
+
 
 
     fun insertConfigurationValues() {
