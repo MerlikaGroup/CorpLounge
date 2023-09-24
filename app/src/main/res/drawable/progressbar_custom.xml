@@ -1,0 +1,37 @@
+<!-- res/drawable/custom_progress_bar.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background Circle -->
+    <item>
+        <shape
+            android:shape="oval">
+            <solid android:color="#C42C85B6" />
+            <corners android:radius="20dp"/>
+        </shape>
+    </item>
+
+    <!-- Progress Circle -->
+    <item
+        android:id="@android:id/progress"
+        android:top="2dp"
+        android:left="2dp"
+        android:right="2dp"
+        android:bottom="2dp">
+        <rotate
+            android:fromDegrees="0"
+            android:toDegrees="360"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape
+                android:shape="oval">
+                <gradient
+                    android:type="sweep"
+                    android:startColor="#6B2196F3"
+                android:centerColor="#6B64B5F3"
+                android:endColor="#6B1976F3"
+                android:angle="0"
+                android:useLevel="false" />
+            </shape>
+        </rotate>
+    </item>
+</layer-list>

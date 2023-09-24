@@ -1,12 +1,16 @@
 package com.example.hrm_management.Utils
 
+import android.content.Context
 import android.util.Log
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.Data.Api.Api
 import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Data.Api.Model.ConfigurationResponse
+import com.example.hrm_management.Data.Api.Model.LoginRequest
+import com.example.hrm_management.Data.Api.Model.LoginResponse
 import com.example.hrm_management.Data.Api.Model.UserResponse
 import com.example.hrm_management.Data.Local.ConfigurationList
+import com.example.hrm_management.Data.Local.User
 import com.example.hrm_management.R
 import retrofit2.Call
 import retrofit2.Callback
@@ -50,6 +54,36 @@ class SyncManager @Inject constructor(
 
         Log.d("From API", manager.getMenuList().toString())
     }
+
+
+    fun syncUser(username: String, password: String) {
+        val loginRequest = LoginRequest(password, username)
+        val userResponseCall: Call<LoginResponse> = api.login(loginRequest)
+
+        userResponseCall.enqueue(object : Callback<LoginResponse> {
+            override fun onResponse(
+                call: Call<LoginResponse>,
+                response: Response<LoginResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val loginResponse: LoginResponse? = response.body()
+                    if (loginResponse != null) {
+                        // Handle the successful response here
+                        Log.d("response", loginResponse.toString())
+                    } else {
+                        Log.d("response", loginResponse.toString())
+                    }
+                } else {
+                    // Handle unsuccessful response (e.g., error messages)
+                }
+            }
+
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                // Handle network request failure
+            }
+        })
+    }
+
 
     fun insertConfigurationValues() {
         // Insert configuration values from AppConfigurations into the table

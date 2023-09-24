@@ -37,7 +37,7 @@ class MainViewModel @Inject constructor(
         syncManager.sync()
         viewModelScope.launch(Dispatchers.IO) {
             // Fetch the User object from the database
-            val fetchedUser = database.configurationListDao().getConfigurationItemByName("MenuList")
+             val fetchedUser = database.configurationListDao().getConfigurationItemByName("MenuList")
 
             // Check if the fetchedUser is not null
             if (fetchedUser != null) {

@@ -7,6 +7,7 @@ import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Data.Local.ConfigurationListDao
 import com.example.hrm_management.Data.Local.UserDao
 import com.example.hrm_management.Utils.SyncManager
+import com.example.hrm_management.Utils.Utils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,7 +53,7 @@ class AppModule {
             .build()
 
         // Define your base URL here
-        val BASE_URL = "http://192.168.1.66:3001/"
+        val BASE_URL = Utils().getBaseURL();
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL) // You can still set the base URL here

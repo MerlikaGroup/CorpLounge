@@ -26,7 +26,10 @@ data class User(
     val registrationDate: Long?, // Assuming DATETIME is stored as Long
 
     @ColumnInfo(name = "Role")
-    val role: Int
+    val role: Int,
+
+    @ColumnInfo(name = "Token")
+    val token: String
 )
 
 

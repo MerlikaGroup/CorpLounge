@@ -9,6 +9,9 @@ import androidx.annotation.RequiresApi
 
 class Utils {
 
+
+    val isTestingEnvironment:Boolean = true;
+
     // Function to get the Android ID
     @SuppressLint("HardwareIds")
     fun getAndroidID(context: Context): String {
@@ -22,5 +25,13 @@ class Utils {
     @RequiresApi(Build.VERSION_CODES.N)
     fun getCurrentLocale(context: Context): LocaleList {
         return context.resources.configuration.locales;
+    }
+
+    fun getBaseURL(): String{
+        return if(isTestingEnvironment){
+            "http://192.168.1.66:3001/";
+        } else{
+            "http://192.168.1.66:3001/";
+        }
     }
 }

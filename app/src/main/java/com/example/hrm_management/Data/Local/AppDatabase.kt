@@ -39,7 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
     }
 }
 
-val Migration1to2: Migration = object : Migration(1, 2) {
+val Migration1to2: Migration = object : Migration(2, 3) {
     override fun migrate(database: SupportSQLiteDatabase) {
         // Update the migration logic to add the new column
         database.execSQL("ALTER TABLE User ADD COLUMN new_column_name TEXT")

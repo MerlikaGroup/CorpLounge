@@ -7,13 +7,87 @@
     tools:context=".Views.Login.Intro">
 
         <!-- First Image (intro) -->
-        <ImageView
-            android:id="@+id/svgImageView"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="fitXY"
-        android:adjustViewBounds="true"
-        android:src="@drawable/corploungeonboard"
-        />
+            android:layout_height="match_parent">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:paddingBottom="30dp"
+        android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+                <!-- Top CardView with ImageView -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="10dp"
+                    app:cardCornerRadius="20dp"
+                    android:paddingBottom="20dp"
+                    android:background="@drawable/shadow_background"
+                    android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:id="@+id/svgImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:scaleType="fitCenter"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/ic_intro" />
+                </androidx.cardview.widget.CardView>
+
+                <!-- Bottom CardView with Welcome Text -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="10dp"
+                    app:cardCornerRadius="20dp"
+                    android:paddingBottom="30dp"
+                    android:background="@drawable/shadow_background"
+                    android:layout_marginBottom="30dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="#00000000">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Welcome to HRify"
+                                    android:textSize="24sp"
+                                    android:textColor="#333333"
+                                    android:layout_gravity="center"
+                                    android:layout_marginBottom="16dp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Your Ultimate HR Management Solution"
+                                    android:textSize="18sp"
+                                    android:textColor="#666666"
+                                    android:layout_gravity="center"
+                                    android:layout_marginBottom="16dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Streamline your HR processes with our user-friendly app. Manage employees, track attendance, handle payroll, and more."
+                                    android:textSize="16sp"
+                                    android:textColor="#999999"
+                                    android:paddingBottom="20dp"
+                                    android:layout_gravity="center" />
+
+                                <!-- Other UI components can be added below this text view as needed -->
+
+                        </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        </ScrollView>
+
+
 </FrameLayout>
