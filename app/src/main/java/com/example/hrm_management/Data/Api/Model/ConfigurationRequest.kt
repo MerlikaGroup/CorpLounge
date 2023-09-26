@@ -1,8 +1,6 @@
 package com.example.hrm_management.Data.Api.Model
 
-data class LoginRequest(
-    val password: String,
+data class ConfigurationRequest(
     val username: String,
-    val fcm_token: String,
+    val token: String
 )
-

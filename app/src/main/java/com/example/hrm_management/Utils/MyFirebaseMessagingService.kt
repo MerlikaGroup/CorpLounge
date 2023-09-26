@@ -58,7 +58,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(com.google.android.material.R.drawable.ic_keyboard_black_24dp)
+            .setSmallIcon(R.drawable.ic_logo)
             .setContentIntent(pendingIntent)
             .setCustomContentView(remoteViews)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable custom content style

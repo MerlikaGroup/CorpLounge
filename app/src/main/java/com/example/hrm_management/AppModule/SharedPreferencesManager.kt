@@ -7,6 +7,9 @@ interface SharedPreferencesManager {
     fun setToken(token: String)
     fun getToken(): String
 
+    fun setSession(token: String)
+    fun getSession(): String
+
     fun isLoggedIn(): Boolean;
     fun setIsLoggedIn(value: Boolean)
 

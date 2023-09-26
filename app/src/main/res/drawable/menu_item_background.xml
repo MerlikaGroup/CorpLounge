@@ -1,0 +1,19 @@
+<!-- menu_item_background.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Card background -->
+    <item>
+        <shape
+            android:shape="rectangle">
+            <corners android:radius="20dp" /> <!-- Adjust the radius for rounded corners -->
+            <solid android:color="@color/black" /> <!-- Background color for the card -->
+        </shape>
+    </item>
+    <!-- Card shadow -->
+    <item android:right="2dp" android:left="2dp" android:top="2dp" android:bottom="4dp">
+        <shape
+            android:shape="rectangle">
+            <corners android:radius="20dp" /> <!-- Adjust the radius for rounded corners -->
+            <solid android:color="@color/gray" /> <!-- Shadow color -->
+        </shape>
+    </item>
+</layer-list>

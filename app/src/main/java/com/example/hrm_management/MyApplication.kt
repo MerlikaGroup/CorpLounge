@@ -63,25 +63,12 @@ class MyApplication: Application() {
         FirebaseApp.initializeApp(this)
         retrieveFCMToken();
 
-        // Initialize WorkManager
-        val workManager = WorkManager.getInstance(this)
 
-        // Define the constraints for running the task (if any)
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED) // Example: Require network connectivity
-            .build()
-
-        val syncWorkRequest = PeriodicWorkRequest.Builder(SyncWorker::class.java,
-            15, // Repeat interval
-            TimeUnit.MINUTES // Time unit
-        )
-            .setConstraints(constraints)
-            .build()
-
-        // Enqueue the work request
-        workManager.enqueue(syncWorkRequest)
-
-
+        Log.d("ApplicationManager", manager.isLoggedIn().toString())
+        Log.d("ApplicationManager", manager.getSession().toString())
+        if(manager.isLoggedIn()) {
+            schedulePeriodicSync();
+        }
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         val bundle = Bundle();
@@ -113,5 +100,26 @@ class MyApplication: Application() {
         })
 
 
+    }
+
+    private fun schedulePeriodicSync() {
+        // Initialize WorkManager
+        val workManager = WorkManager.getInstance(this)
+
+        // Define the constraints for running the task (if any)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED) // Example: Require network connectivity
+            .build()
+
+        val syncWorkRequest = PeriodicWorkRequest.Builder(
+            SyncWorker::class.java,
+            15, // Repeat interval
+            TimeUnit.MINUTES // Time unit
+        )
+            .setConstraints(constraints)
+            .build()
+
+        // Enqueue the work request
+        workManager.enqueue(syncWorkRequest)
     }
 }

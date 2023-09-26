@@ -1,6 +1,6 @@
 package com.example.hrm_management.Data.Api.Model
 
-data class LoginResponse(
+data class ConfigurationsResponse(
     val userID: Int,
     val username: String,
     val password: String,
@@ -9,10 +9,10 @@ data class LoginResponse(
     val role: Int,
     val token: String,
     val fcm_token: String,
-    val configurations: List<Configurations> // List of configurations
+    val configurations: List<ConfigurationLists>
 )
 
-data class Configurations(
+data class ConfigurationLists(
     val configurationName: String,
     val value: String
 )

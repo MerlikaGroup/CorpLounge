@@ -5,18 +5,22 @@
       <map>
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/cardview_custom_background.xml" value="0.114" />
+        <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/ic_corplounge_low_resolution_logo_black_on_transparent_background__1_.xml" value="0.1" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/ic_loginscreen.xml" value="0.155" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/ic_vecteezy_boss_office_workplace_morning_view_from_first_person_25743168.xml" value="0.105" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/ic_vecteezy_boss_office_workplace_morning_view_from_first_person_25743168__1_.xml" value="0.264" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/indeterminate_progressbar.xml" value="0.1" />
+        <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/menu_item_background.xml" value="0.1" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/progressbar_custom.xml" value="0.1" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/drawable/shadow_background.xml" value="0.155" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/layout/activity_main.xml" value="0.11145833333333334" />
+        <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/layout/activity_menu.xml" value="0.2210144927536232" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/layout/custom_notification.xml" value="0.25" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/layout/fragment_intro.xml" value="0.2" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/layout/fragment_login.xml" value="0.176" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/layout/fragment_register.xml" value="0.1" />
+        <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/layout/menu_item_layout.xml" value="0.264" />
         <entry key="..\:/Users/kevin/AndroidStudioProjects/HRM_Management/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
       </map>
     </option>

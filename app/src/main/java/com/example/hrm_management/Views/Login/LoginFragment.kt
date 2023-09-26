@@ -1,5 +1,6 @@
 package com.example.hrm_management.Views.Login
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.MainActivity
 import com.example.hrm_management.R
 import com.example.hrm_management.Utils.SyncManager
+import com.example.hrm_management.Views.Menu.MenuActivity
 import com.example.hrm_management.Views.Register.RegisterFragment
 import com.example.hrm_management.databinding.ActivityMainBinding
 import com.example.hrm_management.databinding.FragmentLoginBinding
@@ -85,10 +87,20 @@ class LoginFragment : Fragment() {
             syncmanager.syncUser(
                 binding.usernameEditText.text.toString(),
                 binding.passwordEditText.text.toString()
-            ) { isDone ->
+            ) { isSuccess, loginResponse ->
                 // This is the callback function that will be called when syncUser is done
                 // You can manage ProgressBar visibility here based on `isDone`
-                progressBar.visibility = if (isDone) View.VISIBLE else View.GONE
+                progressBar.visibility = if (isSuccess) View.VISIBLE else View.GONE
+
+                if (isSuccess && loginResponse != null) {
+                    // Login was successful, navigate to MenuActivity
+                    val intent = Intent(requireContext(), MenuActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish()
+                } else {
+                    // Handle login failure here (e.g., show an error message)
+                }
+
             }
         }
 

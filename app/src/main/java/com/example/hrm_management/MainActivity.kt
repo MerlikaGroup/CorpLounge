@@ -1,6 +1,7 @@
 package com.example.hrm_management
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.example.hrm_management.Utils.LocaleHelper
 import com.example.hrm_management.Utils.Utils
 import com.example.hrm_management.Views.Login.Intro
 import com.example.hrm_management.Views.Login.LoginFragment
+import com.example.hrm_management.Views.Menu.MenuActivity
 import com.example.hrm_management.Views.OnBoarding.OnboardingPagerAdapter
 import com.example.hrm_management.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -54,9 +56,15 @@ class MainActivity : AppCompatActivity() {
         val adapter = OnboardingPagerAdapter(this)
 
 
-       viewModel.sync();
+//       viewModel.sync();
 //        viewModel.generatePDF();
 
+        if(manager.isLoggedIn()){
+// User is logged in, navigate to MenuActivity
+            val intent = Intent(this, MenuActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
 
 
@@ -66,7 +74,6 @@ class MainActivity : AppCompatActivity() {
 // Add your onboarding fragments to the adapter
         adapter.addFragment(Intro())
         adapter.addFragment(LoginFragment())
-
         viewpager.adapter = adapter;
 
 // Link the TabLayout with the ViewPager

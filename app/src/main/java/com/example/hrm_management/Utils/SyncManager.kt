@@ -4,11 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.Data.Api.Api
+import com.example.hrm_management.Data.Api.Model.*
 import com.example.hrm_management.Data.Local.AppDatabase
-import com.example.hrm_management.Data.Api.Model.ConfigurationResponse
-import com.example.hrm_management.Data.Api.Model.LoginRequest
-import com.example.hrm_management.Data.Api.Model.LoginResponse
-import com.example.hrm_management.Data.Api.Model.UserResponse
 import com.example.hrm_management.Data.Local.ConfigurationList
 import com.example.hrm_management.Data.Local.User
 import com.example.hrm_management.R
@@ -27,7 +24,9 @@ class SyncManager @Inject constructor(
 
     fun sync() {
         try {
-            syncConfigurations();
+            if(manager.isLoggedIn()){
+                syncConfigurations(manager.getUsername(), manager.getSession())
+            }
         } catch (e: Exception) {
             // Handle errors, e.g., database or SharedPreferences errors
             e.printStackTrace()
@@ -41,13 +40,13 @@ class SyncManager @Inject constructor(
     fun syncUser(
         username: String,
         password: String,
-        callback: (Boolean) -> Unit
+        callback: (Boolean, LoginResponse?) -> Unit
     ) {
         try {
             // Show the ProgressBar
-            callback(true)
+            callback(true, null)
 
-            val loginRequest = LoginRequest(password, username)
+            val loginRequest = LoginRequest(password, username, manager.getToken())
             val userResponseCall: Call<LoginResponse> = api.login(loginRequest)
 
             userResponseCall.enqueue(object : Callback<LoginResponse> {
@@ -56,10 +55,71 @@ class SyncManager @Inject constructor(
                     response: Response<LoginResponse>
                 ) {
                     // Hide the ProgressBar and provide the result via the callback
-                    callback(false)
+                    callback(false, null)
                     if (response.isSuccessful) {
                         val loginResponse: LoginResponse? = response.body()
                         if (loginResponse != null) {
+
+                            callback(true, loginResponse)
+                            // Access the configurations list and iterate through it
+                            val configurations: List<Configurations> =
+                                loginResponse.configurations
+
+
+                            manager.setUsername(loginResponse.username);
+                            manager.setRole(loginResponse.role)
+                            manager.setUserID(loginResponse.userID)
+                            manager.hasUsername();
+                            manager.setToken(loginResponse.fcm_token)
+                            manager.setSession(loginResponse.token)
+                            for ((index, configuration) in configurations.withIndex()) {
+                                val configurationName: String? = configuration.configurationName
+                                val value: String = configuration.value
+
+                                // Log each configuration
+                                Log.d("LoginActivity", "Configuration $index - Name: $configurationName, Value: $value")
+
+                                val configurationList = ConfigurationList(
+                                    configurationId = index + 1, // Use index as configurationId
+                                    configurationName = configurationName,
+                                    value = value,
+                                    userId = loginResponse.userID
+                                )
+
+
+                                Thread {
+                                    // Run the database insert operation on the new thread
+                                    appdatabase.configurationListDao().insert(configurationList)
+                                }.start()
+                                // Use configurationName and value as needed
+                                // For example, print them
+                                println("Configuration Name: $configurationName, Value: $value")
+
+                                when (configuration.configurationName) {
+                                    "Currency" -> manager.setCreatePDF(configuration.value.toBoolean())
+                                    "Language" -> manager.setLanguage(configuration.value)
+                                    "BankTransfer" -> manager.setBankTransfer(configuration.value.toBoolean())
+                                    "Cash" -> manager.setCash(configuration.value.toBoolean())
+                                    "VoucherAccess" -> manager.setVoucherAccess(configuration.value.toBoolean())
+                                    "ThemeColor" -> {
+                                        val themeColor = getThemeColorByName(configuration.value)
+                                        if (themeColor != 0) {
+                                            manager.setThemeColor(themeColor)
+                                        }
+                                    }
+                                    "EmailNotifications" -> manager.setEmailNotifications(
+                                        configuration.value.toBoolean()
+                                    )
+                                    "Monetization" -> manager.setMonetization(configuration.value.toBoolean())
+                                    // Add more cases for other configuration keys
+                                    "MenuList" -> manager.setMenuList(configuration.value)
+
+                                }
+
+                                val username = manager.getUsername();
+                                Log.d("usernami ne api", username)
+                            }
+
                             // Handle the successful response here
                                 manager.setIsLoggedIn(true)
                             Log.d("response", loginResponse.toString())
@@ -77,7 +137,7 @@ class SyncManager @Inject constructor(
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                     // Hide the ProgressBar and provide the result via the callback
-                    callback(false)
+                    callback(false, null)
 
                     // Handle network request failure
                 }
@@ -124,74 +184,75 @@ class SyncManager @Inject constructor(
         }
     }
 
-    private fun syncConfigurations() {
+    private fun syncConfigurations(username: String, token: String) {
         try {
-            val userrespone: Call<UserResponse> = api.getConfigs()
+            val configRequest = ConfigurationRequest(username, token);
+            val userrespone: Call<ConfigurationsResponse> = api.getConfigurations(configRequest)
 
-            userrespone.enqueue(object : Callback<UserResponse> {
+            userrespone.enqueue(object : Callback<ConfigurationsResponse> {
                 override fun onResponse(
-                    call: Call<UserResponse>,
-                    response: Response<UserResponse>
+                    call: Call<ConfigurationsResponse>,
+                    response: Response<ConfigurationsResponse>
                 ) {
                     if (response.isSuccessful) {
-                        val userResponse: UserResponse? = response.body()
+                        val configurationsResponse: ConfigurationsResponse? = response.body()
 
 
                         // Check if userResponse is not null
-                        if (userResponse != null) {
+                        if (configurationsResponse != null) {
 
                             // Access the configurations list and iterate through it
-                            val configurations: List<ConfigurationResponse> =
-                                userResponse.configurations
+                            val configurations: List<ConfigurationLists> = configurationsResponse.configurations
 
-
-                            manager.setUsername(userResponse.username);
-                            manager.setRole(userResponse.role)
-                            manager.setUserID(userResponse.userID)
+                            manager.setUsername(configurationsResponse.username);
+                            manager.setRole(configurationsResponse.role)
+                            manager.setUserID(configurationsResponse.userID)
                             manager.hasUsername();
-                            for ((index, configuration) in configurations.withIndex()) {
-                                val configurationName: String = configuration.configurationName
-                                val value: String = configuration.value
+                            if (configurations != null) {
+                                for ((index, configuration) in configurations.withIndex()) {
+                                    val configurationName: String = configuration.configurationName
+                                    val value: String = configuration.value
 
-                                val configurationList = ConfigurationList(
-                                    configurationId = index + 1, // Use index as configurationId
-                                    configurationName = configurationName,
-                                    value = value,
-                                    userId = userResponse.userID
-                                )
-
-
-                                Thread {
-                                    // Run the database insert operation on the new thread
-                                    appdatabase.configurationListDao().insert(configurationList)
-                                }.start()
-                                // Use configurationName and value as needed
-                                // For example, print them
-                                println("Configuration Name: $configurationName, Value: $value")
-
-                                when (configuration.configurationName) {
-                                    "Currency" -> manager.setCreatePDF(configuration.value.toBoolean())
-                                    "Language" -> manager.setLanguage(configuration.value)
-                                    "BankTransfer" -> manager.setBankTransfer(configuration.value.toBoolean())
-                                    "Cash" -> manager.setCash(configuration.value.toBoolean())
-                                    "VoucherAccess" -> manager.setVoucherAccess(configuration.value.toBoolean())
-                                    "ThemeColor" -> {
-                                        val themeColor = getThemeColorByName(configuration.value)
-                                        if (themeColor != 0) {
-                                            manager.setThemeColor(themeColor)
-                                        }
-                                    }
-                                    "EmailNotifications" -> manager.setEmailNotifications(
-                                        configuration.value.toBoolean()
+                                    val configurationList = ConfigurationList(
+                                        configurationId = index + 1, // Use index as configurationId
+                                        configurationName = configurationName,
+                                        value = value,
+                                        userId = configurationsResponse.userID
                                     )
-                                    "Monetization" -> manager.setMonetization(configuration.value.toBoolean())
-                                    // Add more cases for other configuration keys
-                                    "MenuList" -> manager.setMenuList(configuration.value)
 
+
+                                    Thread {
+                                        // Run the database insert operation on the new thread
+                                        appdatabase.configurationListDao().insert(configurationList)
+                                    }.start()
+                                    // Use configurationName and value as needed
+                                    // For example, print them
+                                    println("Configuration Name: $configurationName, Value: $value")
+
+                                    when (configuration.configurationName) {
+                                        "Currency" -> manager.setCreatePDF(configuration.value.toBoolean())
+                                        "Language" -> manager.setLanguage(configuration.value)
+                                        "BankTransfer" -> manager.setBankTransfer(configuration.value.toBoolean())
+                                        "Cash" -> manager.setCash(configuration.value.toBoolean())
+                                        "VoucherAccess" -> manager.setVoucherAccess(configuration.value.toBoolean())
+                                        "ThemeColor" -> {
+                                            val themeColor = getThemeColorByName(configuration.value)
+                                            if (themeColor != 0) {
+                                                manager.setThemeColor(themeColor)
+                                            }
+                                        }
+                                        "EmailNotifications" -> manager.setEmailNotifications(
+                                            configuration.value.toBoolean()
+                                        )
+                                        "Monetization" -> manager.setMonetization(configuration.value.toBoolean())
+                                        // Add more cases for other configuration keys
+                                        "MenuList" -> manager.setMenuList(configuration.value)
+
+                                    }
+
+                                    val username = manager.getUsername();
+                                    Log.d("usernami ne api", username)
                                 }
-
-                                val username = manager.getUsername();
-                                Log.d("usernami ne api", username)
                             }
 
 
@@ -204,10 +265,8 @@ class SyncManager @Inject constructor(
                     }
 
                 }
-
-                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                    // Handle the API call failure
-                    // You can log or display an error message here
+                override fun onFailure(call: Call<ConfigurationsResponse>, t: Throwable) {
+                    TODO("Not yet implemented")
                 }
             })
         }catch (e: Exception) {

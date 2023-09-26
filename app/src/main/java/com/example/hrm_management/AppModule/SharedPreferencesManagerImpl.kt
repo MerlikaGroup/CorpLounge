@@ -14,6 +14,15 @@ class SharedPreferencesManagerImpl(private val sharedPreferences: SharedPreferen
         sharedPreferences.edit().putString("TOKEN", token).apply()
     }
 
+    override fun getSession(): String {
+        return sharedPreferences.getString("SESSION", AppConfigurations.SESSION) ?: AppConfigurations.SESSION;
+    }
+
+
+    override fun setSession(token: String) {
+        sharedPreferences.edit().putString("SESSION", token).apply()
+    }
+
 
     override fun isLoggedIn(): Boolean {
         return sharedPreferences.getBoolean("isLoggedIn", false)

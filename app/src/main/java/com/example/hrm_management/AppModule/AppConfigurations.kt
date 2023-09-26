@@ -16,4 +16,5 @@ object AppConfigurations {
     const val USERID = 0;
     const val ROLE = 0;
     const val TOKEN = ""
+    const val SESSION = ""
 }
