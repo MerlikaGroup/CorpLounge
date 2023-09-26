@@ -20,7 +20,7 @@ android {
 
 
 
-    compileSdk 31
+    compileSdk 33
     defaultConfig {
         applicationId "com.example.hrm_management"
         minSdk 22

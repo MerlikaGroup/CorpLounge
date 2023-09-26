@@ -28,7 +28,7 @@
       <ImageView
           android:id="@+id/imageView"
           android:layout_width="wrap_content"
-          android:layout_height="200dp"
+          android:layout_height="120dp"
           android:layout_gravity="center"
           android:backgroundTint="@color/black"
           android:elevation="20dp"
@@ -41,7 +41,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/cardview"
-        android:paddingTop="20dp" />
+        android:fadeScrollbars="true"
+        android:layout_marginTop="5dp"
+        tools:listitem="@layout/menu_item_layout"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2" />
   </RelativeLayout>
   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>

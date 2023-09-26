@@ -1,19 +1,30 @@
-<!-- menu_item.xml -->
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="#AB000080"
     app:cardCornerRadius="20dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
-    <LinearLayout
-        android:paddingTop="40dp"
-        android:paddingBottom="40dp"
+    app:cardBackgroundColor="#6E6EC1"
+    app:cardElevation="5dp"
+    app:cardUseCompatPadding="true"
+    android:layout_margin="8dp"
+    android:padding="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/menuIconImageView"
+            android:layout_width="60dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_logo"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="Menu Icon" />
 
         <TextView
             android:id="@+id/menuNameTextView"
@@ -21,13 +32,12 @@
             android:layout_height="wrap_content"
             android:text="Menu Name"
             android:textColor="@color/white"
-            android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:gravity="center" />
+            android:paddingLeft="10dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_toEndOf="@id/menuIconImageView"
+            android:layout_centerVertical="true" />
 
+    </RelativeLayout>
 
-        <!-- Add other UI elements for each menu item as needed -->
-
-    </LinearLayout>
 </androidx.cardview.widget.CardView>
