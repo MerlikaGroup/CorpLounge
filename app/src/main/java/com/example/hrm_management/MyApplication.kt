@@ -1,9 +1,9 @@
 package com.example.hrm_management
 
 import android.annotation.SuppressLint
-import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -36,6 +36,7 @@ import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
 import java.util.concurrent.TimeUnit
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkRequest
+import com.example.hrm_management.BackgroundSync.SyncReceiver
 
 @HiltAndroidApp
 class MyApplication: Application() {
@@ -54,8 +55,6 @@ class MyApplication: Application() {
     @Inject
     lateinit var Api: Api;
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("StringFormatInvalid")
     override fun onCreate() {
         super.onCreate()
 
@@ -63,17 +62,38 @@ class MyApplication: Application() {
         FirebaseApp.initializeApp(this)
         retrieveFCMToken();
 
+        // Set up an alarm to trigger the SyncReceiver every 15 minutes
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, SyncReceiver::class.java)
+        intent.action = "com.example.hrm_management.SYNC_ACTION" // Custom action
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        // Schedule the alarm to repeat every 15 minutes
+        val interval = 15 * 60 * 1000 // 15 minutes in milliseconds
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis(),
+            interval.toLong(),
+            pendingIntent
+        )
 
         Log.d("ApplicationManager", manager.isLoggedIn().toString())
         Log.d("ApplicationManager", manager.getSession().toString())
-        if(manager.isLoggedIn()) {
-            schedulePeriodicSync();
-        }
+//        if(manager.isLoggedIn()) {
+//            schedulePeriodicSync();
+//        }
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         val bundle = Bundle();
         bundle.putString("Application", Build.MODEL);
         FirebaseAnalytics.getInstance(applicationContext).logEvent("Application",bundle)
+
 
 
 

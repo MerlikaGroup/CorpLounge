@@ -10,6 +10,9 @@ plugins {
 // Add the Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics")
 
+    id("com.google.firebase.firebase-perf")
+
+
 
 }
 
@@ -17,13 +20,14 @@ android {
 
 
 
-    compileSdk 32
+    compileSdk 31
     defaultConfig {
         applicationId "com.example.hrm_management"
         minSdk 22
-        targetSdk 32
+        targetSdk 33
         versionCode 2
         versionName "1.01"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,8 +62,7 @@ android {
 dependencies {
 
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.0"
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -87,7 +90,7 @@ dependencies {
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // Coroutine Lifecycle Scopes
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
@@ -106,9 +109,9 @@ dependencies {
     implementation("com.squareup:javapoet:1.13.0")
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
+    
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
 
 
     implementation 'com.google.maps.android:android-maps-utils:2.0.3'
@@ -116,7 +119,6 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.8.0'
 
-    implementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
 
     implementation 'io.reactivex.rxjava3:rxjava:3.1.2'
@@ -134,7 +136,7 @@ dependencies {
 
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics:21.3.0'
-    implementation 'com.google.firebase:firebase-crashlytics:17.4.1'
+    implementation 'com.google.firebase:firebase-crashlytics:18.4.3'
 
 
     implementation 'com.google.firebase:firebase-messaging:23.2.1' // Use the latest version
@@ -143,6 +145,9 @@ dependencies {
 
     implementation "androidx.work:work-runtime:2.7.0"
 
+    implementation "androidx.multidex:multidex:2.0.1"
+
+    implementation("com.google.firebase:firebase-perf-ktx")
 
 
 
