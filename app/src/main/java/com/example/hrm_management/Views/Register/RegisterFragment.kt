@@ -75,15 +75,15 @@ class RegisterFragment : Fragment() {
 
 
     // Method to get MainActivity reference
-    fun getMainActivity(): MainActivity? {
-        return activity as? MainActivity
-    }
+//    fun getMainActivity(): MainActivity? {
+//        return activity as? MainActivity
+//    }
 
 
 
-    fun onLanguageButtonClick(view: View) {
-     val mainactivity = getMainActivity();
-        mainactivity?.onLanguageButtonClick(view)
-    }
+//    fun onLanguageButtonClick(view: View) {
+//     val mainactivity = getMainActivity();
+//        mainactivity?.onLanguageButtonClick(view)
+//    }
 
 }

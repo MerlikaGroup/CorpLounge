@@ -16,5 +16,5 @@ interface Api {
 
     @Headers("Content-Type: application/json")
     @POST("/login") // Replace with your actual POST endpoint
-    fun login(@Body request: LoginRequest): Call<LoginResponse>;
+    suspend fun login(@Body loginRequest: LoginRequest): Response<LoginResponse>
 }

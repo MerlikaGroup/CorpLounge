@@ -8,6 +8,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation.findNavController
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.BackgroundSync.SyncWorker
 import com.example.hrm_management.Data.Api.Api
@@ -24,89 +28,80 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    @Inject
-    lateinit var manager: SharedPreferencesManager;
-    @Inject
-    lateinit var database: AppDatabase;
 
-    @Inject
-    lateinit var api: Api;
+    @AndroidEntryPoint
+    class MainActivity : AppCompatActivity() {
 
-    lateinit var mContext: Context;
+        @Inject
+        lateinit var manager: SharedPreferencesManager
 
-    private val viewModel: MainViewModel by viewModels()
+        @Inject
+        lateinit var database: AppDatabase
 
+        @Inject
+        lateinit var api: Api
 
+        lateinit var mContext: Context
 
-    lateinit var binding: ActivityMainBinding
+        private lateinit var viewModel: MainViewModel
+        lateinit var binding: ActivityMainBinding;
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        val device = Build.MODEL;
-        FirebaseAnalytics.getInstance(this).setUserId(device)
-
-        val viewpager = binding.viewPager;
-        val tabLayout = binding.tabLayout;
-        val adapter = OnboardingPagerAdapter(this)
+            viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
 
-//       viewModel.sync();
-//        viewModel.generatePDF();
 
-        if(manager.isLoggedIn()){
-// User is logged in, navigate to MenuActivity
-            val intent = Intent(this, MenuActivity::class.java)
-            startActivity(intent)
-            finish()
+            // Bind the ViewModel to the layout using the specific binding class
+            binding.viewModel = viewModel
+            binding.lifecycleOwner = this
+
+
+
+
+            val device = Build.MODEL
+            FirebaseAnalytics.getInstance(this).setUserId(device)
+
+            val viewpager = binding.viewPager
+            val tabLayout = binding.tabLayout
+            val adapter = OnboardingPagerAdapter(this)
+
+            if (manager.isLoggedIn()) {
+                // User is logged in, navigate to MenuActivity
+                val intent = Intent(this, MenuActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            // Add your onboarding fragments to the adapter
+            adapter.addFragment(Intro())
+            adapter.addFragment(LoginFragment())
+            viewpager.adapter = adapter
+
+            // Link the TabLayout with the ViewPager
+            TabLayoutMediator(tabLayout, viewpager) { tab, position ->
+                // Set tab titles if needed
+            }.attach()
+
+            Log.d("manager", viewModel.getMenuList().toString())
         }
 
+        override fun onBackPressed() {
+            super.onBackPressed()
+            Log.d("Manager", "backkkkkkkk")
+        }
 
+        fun onLanguageButtonClick(view: View) {
+            // Change the locale to the desired language code
+            viewModel.setLocale(mContext,manager.getLanguage())
+            // Restart the activity to apply the locale change
+            recreate()
+        }
 
+        // Observe isNetworkRequestInProgress in the parent Activity
 
-
-
-// Add your onboarding fragments to the adapter
-        adapter.addFragment(Intro())
-        adapter.addFragment(LoginFragment())
-        viewpager.adapter = adapter;
-
-// Link the TabLayout with the ViewPager
-        TabLayoutMediator(tabLayout, viewpager) { tab, position ->
-            // Set tab titles if needed
-        }.attach()
-
-       val locales = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-           Utils.getCurrentLocale(this)
-       } else {
-           TODO("VERSION.SDK_INT < N")
-       }
-
-        Log.d("manager", manager.getMenuList().toString())
 
 
     }
-
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-
-        Log.d("Manager", "backkkkkkkk")
-
-    }
-
-    fun onLanguageButtonClick(view: View) {
-        // Change the locale to the desired language code
-        LocaleHelper.setLocale(this, manager.getLanguage()) // Replace "fr" with your desired language code
-
-        // Restart the activity to apply the locale change
-        recreate()
-        //Start project
-    }
-
-}

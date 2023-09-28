@@ -10,11 +10,17 @@ import com.example.hrm_management.Data.Local.ConfigurationList
 import com.example.hrm_management.Data.Local.User
 import com.example.hrm_management.R
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.await
 import javax.inject.Inject
-
+// Inside your SyncManager or Repository class
+import retrofit2.HttpException
+import retrofit2.await
+import java.io.IOException
 
 class SyncManager @Inject constructor(
     private val appdatabase: AppDatabase,
@@ -36,119 +42,116 @@ class SyncManager @Inject constructor(
     }
 
 
-    // Inside your SyncManager or Repository class
-    fun syncUser(
-        username: String,
-        password: String,
-        callback: (Boolean, LoginResponse?) -> Unit
-    ) {
+
+    suspend fun syncUser(username: String, password: String): LoginResponse? {
         try {
-            // Show the ProgressBar
-            callback(true, null)
+            // Show the ProgressBar or handle loading state as needed
 
             val loginRequest = LoginRequest(password, username, manager.getToken())
-            val userResponseCall: Call<LoginResponse> = api.login(loginRequest)
 
-            userResponseCall.enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(
-                    call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
-                ) {
-                    // Hide the ProgressBar and provide the result via the callback
-                    callback(false, null)
-                    if (response.isSuccessful) {
-                        val loginResponse: LoginResponse? = response.body()
-                        if (loginResponse != null) {
-
-                            callback(true, loginResponse)
-                            // Access the configurations list and iterate through it
-                            val configurations: List<Configurations> =
-                                loginResponse.configurations
+            val response = withContext(Dispatchers.IO) {
+                try {
+                    api.login(loginRequest)
+                } catch (e: HttpException) {
+                    // Handle HTTP error (e.g., non-2xx response)
+                    null
+                } catch (e: Exception) {
+                    // Handle other exceptions
+                    null
+                }
+            }
 
 
-                            manager.setUsername(loginResponse.username);
-                            manager.setRole(loginResponse.role)
-                            manager.setUserID(loginResponse.userID)
-                            manager.hasUsername();
-                            manager.setToken(loginResponse.fcm_token)
-                            manager.setSession(loginResponse.token)
-                            for ((index, configuration) in configurations.withIndex()) {
-                                val configurationName: String? = configuration.configurationName
-                                val value: String = configuration.value
+            // Hide the ProgressBar or handle loading state as needed
 
-                                // Log each configuration
-                                Log.d("LoginActivity", "Configuration $index - Name: $configurationName, Value: $value")
+            if (response != null) {
+                if (response.isSuccessful) {
+                    val loginResponse: LoginResponse? = response.body()
+                    if (loginResponse != null) {
+                        // Access the configurations list and iterate through it
+                        val configurations: List<Configurations> = loginResponse.configurations
 
-                                val configurationList = ConfigurationList(
-                                    configurationId = index + 1, // Use index as configurationId
-                                    configurationName = configurationName,
-                                    value = value,
-                                    userId = loginResponse.userID
-                                )
+                        manager.setUsername(loginResponse.username)
+                        manager.setRole(loginResponse.role)
+                        manager.setUserID(loginResponse.userID)
+                        manager.hasUsername()
+                        manager.setToken(loginResponse.fcm_token)
+                        manager.setSession(loginResponse.token)
 
+                        for ((index, configuration) in configurations.withIndex()) {
+                            val configurationName: String? = configuration.configurationName
+                            val value: String = configuration.value
 
-                                Thread {
-                                    // Run the database insert operation on the new thread
-                                    appdatabase.configurationListDao().insert(configurationList)
-                                }.start()
-                                // Use configurationName and value as needed
-                                // For example, print them
-                                println("Configuration Name: $configurationName, Value: $value")
+                            // Log each configuration
+                            Log.d("LoginActivity", "Configuration $index - Name: $configurationName, Value: $value")
 
-                                when (configuration.configurationName) {
-                                    "Currency" -> manager.setCreatePDF(configuration.value.toBoolean())
-                                    "Language" -> manager.setLanguage(configuration.value)
-                                    "BankTransfer" -> manager.setBankTransfer(configuration.value.toBoolean())
-                                    "Cash" -> manager.setCash(configuration.value.toBoolean())
-                                    "VoucherAccess" -> manager.setVoucherAccess(configuration.value.toBoolean())
-                                    "ThemeColor" -> {
-                                        val themeColor = getThemeColorByName(configuration.value)
-                                        if (themeColor != 0) {
-                                            manager.setThemeColor(themeColor)
-                                        }
-                                    }
-                                    "EmailNotifications" -> manager.setEmailNotifications(
-                                        configuration.value.toBoolean()
-                                    )
-                                    "Monetization" -> manager.setMonetization(configuration.value.toBoolean())
-                                    // Add more cases for other configuration keys
-                                    "MenuList" -> manager.setMenuList(configuration.value)
+                            val configurationList = ConfigurationList(
+                                configurationId = index + 1, // Use index as configurationId
+                                configurationName = configurationName,
+                                value = value,
+                                userId = loginResponse.userID
+                            )
 
-                                }
-
-                                val username = manager.getUsername();
-                                Log.d("usernami ne api", username)
+                            // Run the database insert operation using Room with coroutines
+                            withContext(Dispatchers.IO) {
+                                appdatabase.configurationListDao().insert(configurationList)
                             }
 
-                            // Handle the successful response here
-                                manager.setIsLoggedIn(true)
-                            Log.d("response", loginResponse.toString())
-                        } else {
-                            Log.d("response", "Response body is null")
-                            manager.setIsLoggedIn(false)
+                            // Use configurationName and value as needed
+                            // For example, print them
+                            println("Configuration Name: $configurationName, Value: $value")
 
+                            when (configuration.configurationName) {
+                                "Currency" -> manager.setCreatePDF(configuration.value.toBoolean())
+                                "Language" -> manager.setLanguage(configuration.value)
+                                "BankTransfer" -> manager.setBankTransfer(configuration.value.toBoolean())
+                                "Cash" -> manager.setCash(configuration.value.toBoolean())
+                                "VoucherAccess" -> manager.setVoucherAccess(configuration.value.toBoolean())
+                                "ThemeColor" -> {
+                                    val themeColor = getThemeColorByName(configuration.value)
+                                    if (themeColor != 0) {
+                                        manager.setThemeColor(themeColor)
+                                    }
+                                }
+                                "EmailNotifications" -> manager.setEmailNotifications(
+                                    configuration.value.toBoolean()
+                                )
+                                "Monetization" -> manager.setMonetization(configuration.value.toBoolean())
+                                // Add more cases for other configuration keys
+                                "MenuList" -> manager.setMenuList(configuration.value)
+                            }
+
+                            val username = manager.getUsername()
+                            Log.d("usernami ne api", username)
                         }
+
+                        // Handle the successful response here
+                        manager.setIsLoggedIn(true)
+                        Log.d("response", loginResponse.toString())
+
+                        return loginResponse
                     } else {
-                        Log.d("response", response.message())
+                        Log.d("response", "Response body is null")
                         manager.setIsLoggedIn(false)
-
                     }
+                } else {
+                    Log.d("response", "HTTP Error: ${response.code()}") // Log the HTTP error code
+                    manager.setIsLoggedIn(false)
                 }
-
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    // Hide the ProgressBar and provide the result via the callback
-                    callback(false, null)
-
-                    // Handle network request failure
-                }
-            })
-        }catch (e: Exception) {
+            } else {
+                Log.d("response", "Response is null")
+                manager.setIsLoggedIn(false)
+            }
+        } catch (e: Exception) {
             // Handle errors, e.g., database or SharedPreferences errors
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)
         }
 
+        return null
     }
+
+
 
 
 
@@ -274,4 +277,8 @@ class SyncManager @Inject constructor(
             e.printStackTrace()
         }
     }
+
+
 }
+
+

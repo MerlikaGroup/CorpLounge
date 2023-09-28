@@ -1,21 +1,39 @@
 package com.example.hrm_management
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
+import android.os.LocaleList
 import android.util.Log
+import android.view.View
+import androidx.annotation.Keep
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.Data.Api.Api
+import com.example.hrm_management.Data.Api.Model.LoginResponse
 import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Data.Local.ConfigurationList
+import com.example.hrm_management.Navigator.Destination
+import com.example.hrm_management.Navigator.Navigator
+import com.example.hrm_management.Utils.LocaleHelper
 import com.example.hrm_management.Utils.SyncManager
+import com.example.hrm_management.Utils.Utils
+import com.example.hrm_management.Views.Menu.MenuDataClass.MenuItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.Locale
 import javax.inject.Inject
 
+@Keep
 @HiltViewModel
 class MainViewModel @Inject constructor(
      val database: AppDatabase,
@@ -26,34 +44,101 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private var username: ConfigurationList? = null
-        get() = field                    // getter
-        set(value) { field = value }
+    var username: String = ""
+    var password: String = ""
+
+    private val _clicked = MutableLiveData<Boolean>()
+    val clicked: LiveData<Boolean> = _clicked
+
+    private val _loginResult = MutableLiveData<Boolean>()
+    val loginResult: LiveData<Boolean> = _loginResult
+
+    private val _isNetworkRequestInProgress = MutableLiveData<Boolean>()
+    val isNetworkRequestInProgress: LiveData<Boolean> = _isNetworkRequestInProgress
+
+
+    fun isLoggedIn(): Boolean {
+        return manager.isLoggedIn()
+    }
 
 
 
-    fun sync() {
 
-        syncManager.sync()
+    fun onLoginButtonClick(username: String, password: String) {
+
+        _clicked.postValue(true)
+        // Show the ProgressBar immediately
+        _isNetworkRequestInProgress.postValue(true)
+
+        // Perform the network request asynchronously
         viewModelScope.launch(Dispatchers.IO) {
-            // Fetch the User object from the database
-             val fetchedUser = database.configurationListDao().getConfigurationItemByName("MenuList")
+            try {
+                val startTime = System.currentTimeMillis()
 
-            // Check if the fetchedUser is not null
-            if (fetchedUser != null) {
-                // Assign the fetched user to the username property
-                username = fetchedUser
+                val loginResponse = syncManager.syncUser(username, password)
 
-                // Access and log the username property
-                Log.d("usernameee", username?.value.toString());
+                // Update LiveData on the main thread
+                withContext(Dispatchers.Main) {
+                    // Hide the ProgressBar when the request is complete
+                    delay(1000)
+                    _isNetworkRequestInProgress.postValue(false)
 
-                // Update your UI or ViewModel properties here if needed
-            } else {
-                // Handle the case where fetchedUser is null
-                Log.e("usernameee", "Fetched user is null")
+                    if (loginResponse != null) {
+                        // Login was successful, set the loginResult LiveData to true
+                        _loginResult.postValue(true)
+                    } else {
+                        // Handle login failure, set the loginResult LiveData to false
+                        _loginResult.postValue(false)
+                    }
+                }
+            } catch (e: Exception) {
+                // Handle exceptions here, e.g., show an error message
+                e.printStackTrace()
             }
         }
     }
+
+
+
+
+
+    fun getMenuList(): String {
+        // Replace YourMenuListType with the actual type of your menu list
+        return manager.getMenuList()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun getCurrentLocale(context: Context): LocaleList {
+        return Utils.getCurrentLocale(context) // You may need to pass a context here if required
+    }
+
+    fun setLocale(context: Context, languageCode: String) {
+        LocaleHelper.setLocale(context, languageCode) // You may need to pass a context here if required
+    }
+
+
+//    fun sync() {
+//
+//        syncManager.sync()
+//        viewModelScope.launch(Dispatchers.IO) {
+//            // Fetch the User object from the database
+//             val fetchedUser = database.configurationListDao().getConfigurationItemByName("MenuList")
+//
+//            // Check if the fetchedUser is not null
+//            if (fetchedUser != null) {
+//                // Assign the fetched user to the username property
+//                username = fetchedUser
+//
+//                // Access and log the username property
+//                Log.d("usernameee", username?.value.toString());
+//
+//                // Update your UI or ViewModel properties here if needed
+//            } else {
+//                // Handle the case where fetchedUser is null
+//                Log.e("usernameee", "Fetched user is null")
+//            }
+//        }
+//    }
 
 //    fun generatePDF(){
 //        val image = loadSignatureImage();

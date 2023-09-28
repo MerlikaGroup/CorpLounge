@@ -9,8 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.MainActivity
+import com.example.hrm_management.MainViewModel
 import com.example.hrm_management.R
 import com.example.hrm_management.Utils.SyncManager
 import com.example.hrm_management.Views.Menu.MenuActivity
@@ -38,7 +41,12 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding;
 
+
+
     private lateinit var bindingActivity: ActivityMainBinding;
+
+    private val sharedViewModel: MainViewModel by viewModels({ requireActivity() }) // Access the ViewModel shared with the activity
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +54,8 @@ class LoginFragment : Fragment() {
         Log.d("ManagerFragment", manager.getMenuList())
 
         val mainActivity = requireActivity() as MainActivity
+
+
 
 
         // Replace the current fragment with another fragment
@@ -60,49 +70,15 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentLoginBinding.inflate(layoutInflater,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
+
+        // Bind the ViewModel to the layout using the specific binding class
+        binding.viewModel = sharedViewModel;
+        binding.lifecycleOwner = this
 
         val pulseAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.pulse_animation)
         val cardView = binding.cardview3 // Replace 'yourCardView' with your CardView's ID
         cardView.startAnimation(pulseAnimation)
-
-        val shakeAnimation = AnimationUtils.loadAnimation(context, R.anim.shake_animation)
-        val button = binding.loginButton;
-
-        val mainActivityBinding = (requireActivity() as MainActivity).binding
-
-
-
-        val progressBar: ProgressBar = mainActivityBinding.progressBar;
-
-
-// Call this function from your button click listener
-        button.setOnClickListener {
-            button.startAnimation(shakeAnimation)
-
-            // Show the ProgressBar
-            progressBar.visibility = View.VISIBLE
-
-            // Perform the network request
-            syncmanager.syncUser(
-                binding.usernameEditText.text.toString(),
-                binding.passwordEditText.text.toString()
-            ) { isSuccess, loginResponse ->
-                // This is the callback function that will be called when syncUser is done
-                // You can manage ProgressBar visibility here based on `isDone`
-                progressBar.visibility = if (isSuccess) View.VISIBLE else View.GONE
-
-                if (isSuccess && loginResponse != null) {
-                    // Login was successful, navigate to MenuActivity
-                    val intent = Intent(requireContext(), MenuActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
-                } else {
-                    // Handle login failure here (e.g., show an error message)
-                }
-
-            }
-        }
 
 
 
@@ -110,6 +86,31 @@ class LoginFragment : Fragment() {
         return binding.root;
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+
+        val shakeAnimation = AnimationUtils.loadAnimation(context, R.anim.shake_animation)
+
+        sharedViewModel.clicked.observe(viewLifecycleOwner){
+            val button = binding.loginButton;
+            button.startAnimation(shakeAnimation)
+        }
+
+        sharedViewModel.loginResult.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                // Navigate to the next activity
+                val intent = Intent(requireContext(), MenuActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+            } else {
+                // Handle login failure
+            }
+        }
+
+
+    }
 
 
 

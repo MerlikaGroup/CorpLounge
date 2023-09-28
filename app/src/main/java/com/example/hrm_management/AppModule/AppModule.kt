@@ -1,12 +1,14 @@
 package com.example.hrm_management.AppModule
 
 import android.app.Application
+import android.content.Context
 import com.example.hrm_management.BackgroundSync.SyncWorker
 import com.example.hrm_management.Data.Api.Api
 import com.example.hrm_management.Data.Api.Interceptor
 import com.example.hrm_management.Data.Local.AppDatabase
 import com.example.hrm_management.Data.Local.ConfigurationListDao
 import com.example.hrm_management.Data.Local.UserDao
+import com.example.hrm_management.Navigator.Navigator
 import com.example.hrm_management.Utils.SyncManager
 import com.example.hrm_management.Utils.Utils
 import dagger.Module
@@ -79,6 +81,11 @@ class AppModule {
         return SyncManager(appDatabase, manager, api)
     }
 
+    @Provides
+    @Singleton // You can adjust the scope as needed
+    fun provideNavigator(context: Context): Navigator {
+        return Navigator(context)
+    }
 
 
 }
