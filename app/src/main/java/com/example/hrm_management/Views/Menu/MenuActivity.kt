@@ -4,16 +4,24 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.hrm_management.AppModule.SharedPreferencesManager
+import com.example.hrm_management.MainViewModel
 import com.example.hrm_management.R
+import com.example.hrm_management.Utils.LoadingDialog
 import com.example.hrm_management.Utils.SyncManager
 import com.example.hrm_management.Views.Menu.MenuDataClass.MenuItem
+import com.google.android.material.bottomappbar.BottomAppBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -28,16 +36,25 @@ class MenuActivity : AppCompatActivity() {
 
     private var loadingDialog: Dialog? = null // Declare the loading dialog as a global variable
 
+    private lateinit var viewModel: MenuViewModel
+
 
     // Declare the adapter as a class-level variable
     private lateinit var menuAdapter: MenuAdapter
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
+
+        viewModel = ViewModelProvider(this)[MenuViewModel::class.java]
+
+
         // Assuming you have the configuration data as a string
         val configurationString = manager.getMenuList()
+
 
         // Split the string into individual menu items
         val initialmenuitems = getmenuitems(configurationString)
@@ -46,42 +63,69 @@ class MenuActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 3)
 
+
         recyclerView.adapter = menuAdapter
+
+
+        // Observe the loading state LiveData
+        viewModel.loadingState.observe(this) { phase ->
+            // Update UI elements based on the task phase
+            when (phase) {
+                TaskPhase.INITIALIZING -> {
+                    LoadingDialog.showLoading(this,phase)
+
+                    // Other UI updates specific to this phase
+                }
+
+                TaskPhase.LOADING_DATA -> {
+                    LoadingDialog.showLoading(this,phase)
+
+                    // Other UI updates specific to this phase
+                }
+
+                TaskPhase.SYNCING_DATA -> {
+                    LoadingDialog.showLoading(this,phase)
+
+                    // Other UI updates specific to this phase
+                }
+
+                TaskPhase.FINALIZING -> {
+                    LoadingDialog.showLoading(this,phase)
+                    // Other UI updates specific to this phase
+                }
+
+            }
+
+            lifecycle.addObserver(object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    LoadingDialog.dismissLoading()
+                }
+            })
+        }
+
 
 
         val swipeRefreshLayout: SwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
-            // Start a coroutine within the activity's scope
-            CoroutineScope(Dispatchers.IO).launch {
+            // Start a coroutine within the ViewModel's scope
+            viewModel.viewModelScope.launch {
                 try {
-                    // Display the loading dialog for the INITIALIZING phase
-                    withContext(Dispatchers.Main) {
-                        showLoading(TaskPhase.INITIALIZING)
-                    }
+                    // Set the loading state for each phase
+                    viewModel.setLoadingState(TaskPhase.INITIALIZING)
 
                     // Perform initialization tasks (if any)
                     // ...
 
-                    // Display the loading dialog for the LOADING_DATA phase
-                    withContext(Dispatchers.Main) {
-                        showLoading(TaskPhase.LOADING_DATA)
-                    }
+                    viewModel.setLoadingState(TaskPhase.LOADING_DATA)
 
                     // Load data (if any)
                     // ...
 
-                    // Display the loading dialog for the SYNCING_DATA phase
-                    withContext(Dispatchers.Main) {
-                        showLoading(TaskPhase.SYNCING_DATA)
-                    }
+                    viewModel.setLoadingState(TaskPhase.SYNCING_DATA)
 
-                    // Synchronize data using syncManager
-                    syncManager.sync()
+                    viewModel.sync()
 
-                    // Display the loading dialog for the FINALIZING phase
-                    withContext(Dispatchers.Main) {
-                        showLoading(TaskPhase.FINALIZING)
-                    }
+                    viewModel.setLoadingState(TaskPhase.FINALIZING)
 
                     // Simulate a delay (e.g., 1 second) to show the completed phase
                     delay(1000) // Delay for 1 second (adjust the time as needed)
@@ -98,15 +142,15 @@ class MenuActivity : AppCompatActivity() {
                         swipeRefreshLayout.isRefreshing = false
 
                         // Dismiss the loading dialog after the task is complete
-                        loadingDialog?.dismiss()
+                        LoadingDialog.dismissLoading()
                     }
                 } catch (e: Exception) {
                     // Handle exceptions here
-
                     Log.d("error", "error")
                 }
             }
         }
+
 
     }
     // Create a function to refresh the adapter when needed
@@ -168,6 +212,12 @@ class MenuActivity : AppCompatActivity() {
         loadingDialog?.show()
         progressBar?.visibility = View.VISIBLE;
     }
+
+
+
+
+
+
 
     // You can call this function when you want to refresh the adapter with new data
     // For example, when you have updated data and want to refresh the RecyclerView:

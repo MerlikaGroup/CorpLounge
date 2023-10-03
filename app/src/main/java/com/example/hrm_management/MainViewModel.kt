@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.LocaleList
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
@@ -175,6 +176,7 @@ class MainViewModel @Inject constructor(
 
         return null
     }
+
 }
 
 

@@ -71,7 +71,7 @@ class MyApplication: Application() {
             this,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE // Use FLAG_IMMUTABLE
         )
 
         // Schedule the alarm to repeat every 15 minutes

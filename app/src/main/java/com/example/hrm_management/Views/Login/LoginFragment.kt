@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo
 import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -89,6 +90,19 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
+
+        // Set the EditorActionListener on the username EditText
+        binding.usernameEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                // Move focus to the password EditText when "Next" is pressed
+                binding.passwordEditText.requestFocus()
+                true
+            } else {
+                false
+            }
+        }
 
 
         val shakeAnimation = AnimationUtils.loadAnimation(context, R.anim.shake_animation)

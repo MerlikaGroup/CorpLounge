@@ -73,7 +73,10 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/white"
                         android:paddingStart="8dp"
-                        android:paddingEnd="8dp" />
+                        android:paddingEnd="8dp"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                    android:imeActionLabel="Next"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Space
