@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.airbnb.lottie.LottieAnimationView
 import com.example.hrm_management.AppModule.SharedPreferencesManager
 import com.example.hrm_management.MainViewModel
 import com.example.hrm_management.R
@@ -22,6 +23,8 @@ import com.example.hrm_management.Utils.LoadingDialog
 import com.example.hrm_management.Utils.SyncManager
 import com.example.hrm_management.Views.Menu.MenuDataClass.MenuItem
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -42,12 +45,19 @@ class MenuActivity : AppCompatActivity() {
     // Declare the adapter as a class-level variable
     private lateinit var menuAdapter: MenuAdapter
 
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        val bundle = Bundle()
+        bundle.putString("username", manager.getUsername())
+        firebaseAnalytics.logEvent("user", bundle)
 
         viewModel = ViewModelProvider(this)[MenuViewModel::class.java]
 
@@ -67,12 +77,18 @@ class MenuActivity : AppCompatActivity() {
         recyclerView.adapter = menuAdapter
 
 
+
+
         // Observe the loading state LiveData
         viewModel.loadingState.observe(this) { phase ->
             // Update UI elements based on the task phase
+            LoadingDialog.initialize(this)
+
             when (phase) {
                 TaskPhase.INITIALIZING -> {
                     LoadingDialog.showLoading(this,phase)
+
+
 
                     // Other UI updates specific to this phase
                 }
@@ -107,28 +123,37 @@ class MenuActivity : AppCompatActivity() {
 
         val swipeRefreshLayout: SwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
+            LoadingDialog.initialize(this@MenuActivity)
             // Start a coroutine within the ViewModel's scope
             viewModel.viewModelScope.launch {
                 try {
                     // Set the loading state for each phase
+                     // Delay for 1 second (adjust the time as needed)
+
                     viewModel.setLoadingState(TaskPhase.INITIALIZING)
 
                     // Perform initialization tasks (if any)
                     // ...
+
+                    delay(300) // Delay for 1 second (adjust the time as needed)
 
                     viewModel.setLoadingState(TaskPhase.LOADING_DATA)
 
                     // Load data (if any)
                     // ...
 
+                    delay(300) // Delay for 1 second (adjust the time as needed)
+
                     viewModel.setLoadingState(TaskPhase.SYNCING_DATA)
 
                     viewModel.sync()
 
+                    delay(300) // Delay for 1 second (adjust the time as needed)
+
                     viewModel.setLoadingState(TaskPhase.FINALIZING)
 
                     // Simulate a delay (e.g., 1 second) to show the completed phase
-                    delay(1000) // Delay for 1 second (adjust the time as needed)
+                    delay(300) // Delay for 1 second (adjust the time as needed)
 
                     // Continue with UI updates after the delay
                     withContext(Dispatchers.Main) {

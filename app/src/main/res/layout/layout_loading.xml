@@ -18,6 +18,14 @@
         android:visibility="visible"
         android:layout_marginBottom="16dp"
         android:progressTint="@color/white" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/lottie"
+        android:elevation="20dp" />
 
     <TextView
         android:id="@+id/loadingText"

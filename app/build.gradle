@@ -168,8 +168,7 @@ dependencies {
 
     implementation("com.google.firebase:firebase-perf-ktx")
 
-
-
+    implementation 'com.airbnb.android:lottie:4.0.0' // Use the latest version
 
 
 }
